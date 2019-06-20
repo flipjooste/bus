@@ -1,24 +1,8 @@
 
-# coding: utf-8
-
-# In[2]:
-
-
 import pandas as pd
 from IPython.core.display import HTML
-
-
-# In[3]:
-
-
 import folium
 from folium import plugins
-get_ipython().magic('matplotlib inline')
-
-
-# In[4]:
-
-
 import pandas as pd
 import numpy as np
 import time
@@ -43,22 +27,12 @@ for key in my_bucket.objects.filter(Prefix="faces/"):
         print(i)
 
 
-# In[86]:
-
-
-df.shape
-
 
 # In[7]:
 
-
+df=pd.read_csv('c:/Users/flip/Documents/GDE/Bus/photonames.csv',dtype='str')
 df.to_csv('c:/Users/flip/Documents/GDE/Bus/photonames.csv',dtype='str')
 
-
-# In[88]:
-
-
-df=pd.read_csv('c:/Users/flip/Documents/GDE/Bus/photonames.csv',dtype='str')
 
 
 # In[89]:
