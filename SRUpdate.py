@@ -1,13 +1,12 @@
 import boto3
 import cx_Oracle
+import pandas as pd
 
-s3 = boto3.resource('s3')
-my_bucket = s3.Bucket('pmmflip')
-i=1
-j=53374
+
 array=[]
-connection = cx_Oracle.connect("scholar", "scholar123", "141.144.50.141/PDB1.a431154.oraclecloud.internal")
+connection = cx_Oracle.connect("scholar", "scholar123", "130.61.26.162/PDB1.svcsubnetad1.svcvcn.oraclevcn.com")
 cursor = connection.cursor()
+s=pd.read_sql_table('student_rekognition',connection)
 #cursor.arraysize = 10
 #cursor.execute('Select learner_guid,emis_no,learner_name from learners')
 #cursor.prepare('insert into faces (id,photoname,date_modified) values (:id,:photoname,:date_modified)')
