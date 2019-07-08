@@ -12,7 +12,7 @@ from IPython.core.display import HTML
 import folium
 from folium import plugins
 
-get_ipython().magic('matplotlib inline')
+#get_ipython().magic('matplotlib inline')
 
 # In[1]:
 
@@ -104,24 +104,16 @@ for index, row in df.iterrows():
 # In[94]:
 
 
-s = pd.read_csv('g:/gde/Bus/student_rekognition.csv', dtype='str', encoding='ANSI')
+s = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/student_rekognition.csv', dtype='str', encoding='ANSI')
 
 # In[95]:
 
 
-b = pd.read_csv('g:/gde/Bus/bus_stops.csv', dtype='str')
+b = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/bus_stops.csv', dtype='str')
 
 # In[96]:
+r = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/routes.csv', dtype='str')
 
-
-r = pd.read_csv('g:/gde/Bus/routes.csv', dtype='str')
-
-# In[97]:
-
-
-r['CAPTURE_DATE'] = pd.to_datetime(r.ROUTE_DATE + ' ' + r.START_TIME)
-b['STOP_DATE'] = pd.to_datetime(b['STOP_DATE'])
-b['START_DATE'] = pd.to_datetime(b['START_DATE'])
 
 # In[98]:
 
@@ -161,14 +153,25 @@ s['capture_date'] = pd.to_datetime(s.gps_time)
 s.sort_values('capture_date', inplace=True)
 
 # In[110]:
+tmp = (b.stop_date == 'na') & (b.start_date != 'na')
+b['stop_date'] = b[tmp]['start_date']
 
+#%%
 
 b = b[b.stop_date != 'na']
+#%%
+
+r = r[r.start_time!= 'na']
 
 # In[111]:
+r['capture_date'] = pd.to_datetime(r.route_date + ' ' + r.start_time)
+#b['stop_date'] = pd.to_datetime(b['stop_date'])
+#b['start_date'] = pd.to_datetime(b['start_date'])
 
+b.sort_values('stop_date', inplace=True)
+#%%
+r['start_date']=r['capture_date']
 
-b.sort_values('start_date', inplace=True)
 
 # In[105]:
 
@@ -185,17 +188,17 @@ r.index = r.capture_date
 # In[8]:
 
 
-b = pd.merge(b, r[['route_guid', 'agent_guid']], on='route_guid', how='inner')
+b = pd.merge(b, r[['route_guid', 'agent_guid','qa_status']], on='route_guid', how='inner')
 
 # In[76]:
 
 
-s = pd.merge(s, r[['route_guid', 'agent_guid']], on='route_guid', how='inner')
+s = pd.merge(s, r[['route_guid', 'agent_guid','qa_status']], on='route_guid', how='inner')
 
 # In[20]:
 
 
-r.head()
+sb = pd.merge_asof(s, b, left_on='capture_date',right_on = 'start_date', by='route_guid', direction='backward')
 
 # In[109]:
 
@@ -203,6 +206,10 @@ r.head()
 b[['start_date', 'stop_date']].to_csv('g:/gde/bus/gpstime.csv')
 
 # In[26]:
+
+r.dtypes
+
+#%%
 
 
 tmpg = s.groupby(['route_guid', 'emis_number'])['student_id'].count()
