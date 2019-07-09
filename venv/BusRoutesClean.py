@@ -102,218 +102,157 @@ for index, row in df.iterrows():
         # f.write('{0};{1};{2};{3};{4};{5};{6};{7}\n'.format(route_guid,lat,lon,gps_time,user,driver,regnumber,on_off))
 
 # In[94]:
-
-
 s = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/student_rekognition.csv', dtype='str', encoding='ANSI')
 
 # In[95]:
-
-
 b = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/bus_stops.csv', dtype='str')
 
 # In[96]:
 r = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/routes.csv', dtype='str')
 
-
-# In[98]:
-
-new = b.start_gps.str.split(',', n=1, expand=True)
-b['lat_start'] = pd.to_numeric(new[0])
-b['lon_start'] = pd.to_numeric(new[1])
-
 # In[99]:
-
-
 s = s.fillna('na')
 r = r.fillna('na')
 b = b.fillna('na')
 
 # In[100]:
-
-
 s.columns = map(str.lower, s.columns)
 r.columns = map(str.lower, r.columns)
 b.columns = map(str.lower, b.columns)
 
 # In[101]:
-
-
 s['gps_time'] = s.gps_time.str.split('.JPG', expand=True)[0]
 s['gps_time'] = s.gps_time.str.replace('_', ' ')
 s['gps_time'] = s.gps_time.str.replace('v', '')
-
-# In[102]:
-
-
 s['capture_date'] = pd.to_datetime(s.gps_time)
-
-# In[103]:
-
-
 s.sort_values('capture_date', inplace=True)
 
 # In[110]:
-tmp = (b.stop_date == 'na') & (b.start_date != 'na')
-b['stop_date'] = b[tmp]['start_date']
+#tmp = (b.stop_date == 'na') & (b.start_date != 'na')
+#b['stop_date'] = b[tmp]['start_date']
 
 #%%
-
+b = b[b.start_date != 'na']
 b = b[b.stop_date != 'na']
-#%%
-
 r = r[r.start_time!= 'na']
 
 # In[111]:
 r['capture_date'] = pd.to_datetime(r.route_date + ' ' + r.start_time)
-#b['stop_date'] = pd.to_datetime(b['stop_date'])
-#b['start_date'] = pd.to_datetime(b['start_date'])
-
+b['stop_date'] = pd.to_datetime(b['stop_date'])
+b['start_date'] = pd.to_datetime(b['start_date'])
 b.sort_values('stop_date', inplace=True)
-#%%
-r['start_date']=r['capture_date']
-
-
-# In[105]:
-
-
 r.sort_values('capture_date', inplace=True)
+new = b.start_gps.str.split(',', n=1, expand=True)
+b['lat_start'] = pd.to_numeric(new[0])
+b['lon_start'] = pd.to_numeric(new[1])
 
 # In[92]:
-
-
 s.index = s.capture_date
 b.index = b.capture_date
 r.index = r.capture_date
 
 # In[8]:
-
-
 b = pd.merge(b, r[['route_guid', 'agent_guid','qa_status']], on='route_guid', how='inner')
-
-# In[76]:
-
-
 s = pd.merge(s, r[['route_guid', 'agent_guid','qa_status']], on='route_guid', how='inner')
 
 # In[20]:
-
-
-sb = pd.merge_asof(s, b, left_on='capture_date',right_on = 'start_date', by='route_guid', direction='backward')
+b.sort_values('stop_date', inplace=True)
+s.sort_values('capture_date', inplace=True)
+sb = pd.merge_asof(s, b, left_on='capture_date',right_on = 'stop_date', by='route_guid', direction='forward')
 
 # In[109]:
 
-
-b[['start_date', 'stop_date']].to_csv('g:/gde/bus/gpstime.csv')
+sb.to_csv('c:/Users/flip/Documents/GDE/Bus/sb.csv')
 
 # In[26]:
+sbg=sb.route_guid.value_counts()
+sbgs=sb.groupby(['route_guid','stop_guid_y','lat_start','lon_start'])
 
-r.dtypes
+#%%
+for name, group in sbgs.groupby(['route_guid','stop_guid_y','lat_start','lon_start']):
+    print(name)
+#%%
+
+colors = [
+    'red',
+    'blue',
+    'gray',
+    'darkred',
+    'lightred',
+    'orange',
+    'beige',
+    'green',
+    'darkgreen',
+    'lightgreen',
+    'darkblue',
+    'lightblue',
+    'purple',
+    'darkpurple',
+    'pink',
+    'cadetblue',
+    'lightgray',
+    'black'
+]
+c = 1
+m = folium.Map([-26.5973689, 27.8349605], zoom_start=12)
+for i, j in sbg.items():
+    route = i[0]
+    line = []
+    if c == 16:
+        break
+    for index, row in sb[sb.route_guid == route].iterrows():
+        p = [row['lat_start'], row['lon_start']]
+        print(p)
+        line.append([row['lat_start'], row['lon_start']])
+        poptxt = str(row['route_guid']) + ' ' + str(row['stop_number'])
+        color = colors[c]
+        if str(row['stop_number']) == '1':
+            color = 'red'
+        folium.Marker(location=p,
+            popup=poptxt,
+            icon=folium.Icon(color=color)).add_to(m)
+    folium.PolyLine(line, popup=route, color=colors[c]).add_to(m)
+    c+=1
+
+m.save('c:/Users/flip/Documents/GDE/Bus/sb.html')
+
 
 #%%
 
-
-tmpg = s.groupby(['route_guid', 'emis_number'])['student_id'].count()
-
-# In[27]:
-
-
-tmpg = tmpg.to_frame()
-tmpg = tmpg.reset_index()
-
-# In[28]:
-
-
-tmpg
-
-# In[29]:
-
-
-tmpg = tmpg.sort_values(by='student_id', ascending=False)
+m = folium.Map([-26.5973689, 27.8349605], zoom_start=12)
+oldroute = 0
+line = []
+for i, j in sbg.items():
+    route = i[0]
+    routestop = i[1]
+    if route != oldroute:
+        if oldroute != 0:
+            folium.PolyLine(line, popup=oldroute).add_to(m)
+        oldroute = route
+        line = []
+    for index, row in sb[val].iterrows():
+        if row['route_guid'] == route and row['stop_number'] == i[1]:
+            p = [row['lat_start'], row['lon_start']]
+            line.append([row['lat_start'], row['lon_start']])
+            poptxt = str(row['route_guid']) + ' ' + str(routestop) + ' ' + str(j)
+            color = 'green'
+            if routestop == '1':
+                color = 'red'
+            folium.Marker(location=p,
+                          popup=poptxt,
+                          icon=folium.Icon(color=color)).add_to(m)
 
 # In[30]:
 
 
 tmpg.sort_values('student_id', ascending=False).drop_duplicates(['route_guid', 'emis_number'])
 
-# In[37]:
-
-
-tval = tmpg.route_guid == 'LGV8YWNHIO0C20190402_151130'
-
-# In[38]:
-
-
-tmpg[tval]
 
 # In[35]:
 
 
 tmp = s.groupby(['route_guid', 'emis_number', 'on_off'])['student_id'].count().max(level=0)
 
-# In[23]:
-
-
-sp = sp.fillna('na')
-
-# In[24]:
-
-
-sp['sdate'] = sp.student_rekognition_id.str.split('_', expand=True)[0].str[-8:]
-
-# In[26]:
-
-
-sp['cnt'] = 1
-
-# In[27]:
-
-
-same = sp.sdate == sp.rdate
-
-# In[28]:
-
-
-notsame = sp.sdate != sp.rdate
-
-# In[29]:
-
-
-sp[notsame].to_csv('g:/gde/Bus/notsame.csv')
-
-# In[30]:
-
-
-sp[same].to_csv('g:/gde/Bus/same.csv')
-
-# In[33]:
-
-
-sp[notsame].shape
-
-# In[30]:
-
-
-s = s.fillna('na')
-
-# In[29]:
-
-
-sna = s.capture_date == 'na'
-
-# In[62]:
-
-
-s[sna]
-
-# In[136]:
-
-
-s.groupby(s.sdate)['cnt'].count().to_clipboard()
-
-# In[87]:
-
-
-s[same].to_csv('g:/gde/Bus/sr_csv')
 
 # In[52]:
 
@@ -322,25 +261,6 @@ stemp = s.agent_guid == '132'
 btemp = b.agent_guid == '132'
 rtemp = r.agent_guid == '132'
 
-# In[53]:
-
-
-sbtemp = pd.merge_asof(s[stemp], b[btemp], on='capture_date', by='route_guid', direction='nearest')
-
-# In[36]:
-
-
-a = pd.read_csv('g:/gde/Bus/agent.csv', dtype='str')
-
-# In[37]:
-
-
-a.columns = map(str.lower, a.columns)
-
-# In[38]:
-
-
-a.loc[0]
 
 # In[ ]:
 
@@ -353,6 +273,7 @@ for index, row in a.iterrows():
 
 # In[69]:
 
+#%%
 
 sb = pd.merge_asof(s.sort_values('capture_date'), b.sort_values('capture_date'), on='capture_date', by='route_guid',
                    direction='nearest')
@@ -360,17 +281,14 @@ sb = pd.merge_asof(s.sort_values('capture_date'), b.sort_values('capture_date'),
 # In[30]:
 
 
-val = sb.route_guid == '3Z594B5DQAZ620190417_134524'
+sb[sb.route_guid == '3Z594B5DQAZ620190417_134524']
+
 
 # In[43]:
 
 
 val = (sb.emis_number == '700231530') & (sb.route_guid.str.contains('20190417'))
 
-# In[34]:
-
-
-sb[val].head()
 
 # In[65]:
 
@@ -421,18 +339,16 @@ colors = [
     'pink',
     'cadetblue',
     'lightgray',
-    'black'
-]
+    'black']
+
 c = 1
 m = folium.Map([-26.5973689, 27.8349605], zoom_start=12)
-oldroute = ''
 line = []
 pcnt = 0
 for i, j in sbg.items():
     route = i[0]
-    routestop = i[1]
     school = i[2]
-    for index, row in b.iterrows():
+    for index, row in sb.iterrows():
         if row['route_guid'] == route and row['stop_number'] == routestop:
             pcnt += 1
             p = [row['lat_start'], row['lon_start']]
