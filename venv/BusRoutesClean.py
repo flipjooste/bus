@@ -102,13 +102,13 @@ for index, row in df.iterrows():
         # f.write('{0};{1};{2};{3};{4};{5};{6};{7}\n'.format(route_guid,lat,lon,gps_time,user,driver,regnumber,on_off))
 
 # In[94]:
-s = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/student_rekognition.csv', dtype='str', encoding='ANSI')
+s = pd.read_csv('g:/gde/Bus/student_rekognition.csv', dtype='str', encoding='ANSI')
 
 # In[95]:
-b = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/bus_stops.csv', dtype='str')
+b = pd.read_csv('g:/gde/Bus/bus_stops.csv', dtype='str')
 
 # In[96]:
-r = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/routes.csv', dtype='str')
+r = pd.read_csv('g:/gde/Bus/routes.csv', dtype='str')
 
 # In[99]:
 s = s.fillna('na')
@@ -146,6 +146,12 @@ new = b.start_gps.str.split(',', n=1, expand=True)
 b['lat_start'] = pd.to_numeric(new[0])
 b['lon_start'] = pd.to_numeric(new[1])
 
+#%%
+s['lat'] = pd.to_numeric(s['lat'])
+s['lon'] = pd.to_numeric(s['lon'])
+
+
+
 # In[92]:
 s.index = s.capture_date
 b.index = b.capture_date
@@ -162,7 +168,7 @@ sb = pd.merge_asof(s, b, left_on='capture_date',right_on = 'stop_date', by='rout
 
 # In[109]:
 
-sb.to_csv('c:/Users/flip/Documents/GDE/Bus/sb.csv')
+sb.to_csv('g:/gde/Bus/sb.csv')
 
 # In[26]:
 sbg=sb.route_guid.value_counts()
@@ -196,25 +202,22 @@ colors = [
 c = 1
 m = folium.Map([-26.5973689, 27.8349605], zoom_start=12)
 for i, j in sbg.items():
-    route = i[0]
+    route = i
     line = []
-    if c == 16:
-        break
+    print(route)
     for index, row in sb[sb.route_guid == route].iterrows():
-        p = [row['lat_start'], row['lon_start']]
+        p = [row['lat'], row['lon']]
         print(p)
-        line.append([row['lat_start'], row['lon_start']])
+        #line.append([row['lat_start'], row['lon_start']])
         poptxt = str(row['route_guid']) + ' ' + str(row['stop_number'])
         color = colors[c]
         if str(row['stop_number']) == '1':
             color = 'red'
-        folium.Marker(location=p,
-            popup=poptxt,
-            icon=folium.Icon(color=color)).add_to(m)
-    folium.PolyLine(line, popup=route, color=colors[c]).add_to(m)
+        folium.Marker(location=p,popup=poptxt,icon=folium.Icon(color=color)).add_to(m)
+    #folium.PolyLine(line, popup=route, color=colors[c]).add_to(m)
     c+=1
-
-m.save('c:/Users/flip/Documents/GDE/Bus/sb.html')
+    break
+m.save('g:/gde/Bus/sb.html')
 
 
 #%%
@@ -233,6 +236,7 @@ for i, j in sbg.items():
     for index, row in sb[val].iterrows():
         if row['route_guid'] == route and row['stop_number'] == i[1]:
             p = [row['lat_start'], row['lon_start']]
+            print(p)
             line.append([row['lat_start'], row['lon_start']])
             poptxt = str(row['route_guid']) + ' ' + str(routestop) + ' ' + str(j)
             color = 'green'
