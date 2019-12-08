@@ -2,32 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6c0588ad-573e-4a3b-bef8-ff7ea7b16819" name="Default Changelist" comment="new">
-      <change afterPath="$PROJECT_DIR$/COMBINED STOPS REVIEW 2.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/processes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pyroutelib2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rekon.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rekon.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rekonscholar.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/schools2017.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/schools2019.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tilescache/15/18942/18872/data.osm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tilescache/15/18942/18873/data.osm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tilescache/15/18943/18872/data.osm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tilescache/15/18943/18873/data.osm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tilescache/15/18943/18874/data.osm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tilescache/15/18944/18872/data.osm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tilescache/15/18944/18873/data.osm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tilescache/15/18944/18874/data.osm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tilescache/15/18945/18873/data.osm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tilescache/15/18945/18874/data.osm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/venv/opc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FoliumBusPhoto.py" beforeDir="false" afterPath="$PROJECT_DIR$/FoliumBusPhoto.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/report.py" beforeDir="false" afterPath="$PROJECT_DIR$/report.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/BusRoutesClean.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/BusRoutesClean.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -69,8 +44,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/report.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="121">
-              <caret line="59" column="12" lean-forward="true" selection-start-line="59" selection-start-column="12" selection-end-line="59" selection-end-column="12" />
+            <state relative-caret-position="216">
+              <caret line="33" column="21" selection-start-line="33" selection-start-column="21" selection-end-line="33" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -148,6 +123,7 @@
     <panes />
   </component>
   <component name="PropertiesComponent">
+    <property name="ChangesTree.GroupingKeys" value="directory&#10;repository" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/BusRoutes.py" />
@@ -185,7 +161,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.BusRoutesClean">
+  <component name="RunManager" selected="Python.report">
     <configuration name="BusRoutes" type="PythonConfigurationType" factoryName="Python">
       <module name="bus" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -224,28 +200,6 @@
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/venv/BusRoutesClean.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="FacesList" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="bus" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/FacesList.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
@@ -406,6 +360,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="report" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="bus" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/report.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="timeline" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="bus" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -434,19 +410,19 @@
       <item itemvalue="Python.conda" />
       <item itemvalue="Python.orapanda" />
       <item itemvalue="Python.BusRoutes" />
-      <item itemvalue="Python.FacesList" />
       <item itemvalue="Python.FoliumBusPhoto" />
       <item itemvalue="Python.boxes" />
       <item itemvalue="Python.timeline" />
       <item itemvalue="Python.BusRoutesClean" />
+      <item itemvalue="Python.report" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.report" />
         <item itemvalue="Python.BusRoutesClean" />
         <item itemvalue="Python.FoliumBusPhoto" />
         <item itemvalue="Python.timeline" />
         <item itemvalue="Python.boxes" />
-        <item itemvalue="Python.FacesList" />
       </list>
     </recent_temporary>
   </component>
@@ -474,7 +450,7 @@
       <workItem from="1562682407032" duration="310000" />
       <workItem from="1572023239507" duration="114000" />
       <workItem from="1572354570544" duration="40536000" />
-      <workItem from="1575467478070" duration="2581000" />
+      <workItem from="1575467478070" duration="3900000" />
     </task>
     <task id="LOCAL-00001" summary="new">
       <created>1561013351976</created>
@@ -518,11 +494,25 @@
       <option name="project" value="LOCAL" />
       <updated>1562596529991</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="new">
+      <created>1575818737491</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1575818737491</updated>
+    </task>
+    <task id="LOCAL-00008" summary="new">
+      <created>1575819467690</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1575819467690</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="115561000" />
+    <option name="totallyTimeSpent" value="116880000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1213" height="773" extended-state="6" />
@@ -703,8 +693,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/report.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="121">
-          <caret line="59" column="12" lean-forward="true" selection-start-line="59" selection-start-column="12" selection-end-line="59" selection-end-column="12" />
+        <state relative-caret-position="216">
+          <caret line="33" column="21" selection-start-line="33" selection-start-column="21" selection-end-line="33" selection-end-column="21" />
         </state>
       </provider>
     </entry>
