@@ -1,8 +1,8 @@
 
 import pandas as pd
 from IPython.core.display import HTML
-import folium
-from folium import plugins
+#import folium
+#from folium import plugins
 import pandas as pd
 import numpy as np
 import time
@@ -33,6 +33,10 @@ for key in my_bucket.objects.filter(Prefix="faces/"):
 df=pd.read_csv('c:/Users/flip/Documents/GDE/Bus/photonames.csv',dtype='str')
 df.to_csv('c:/Users/flip/Documents/GDE/Bus/photonames.csv',dtype='str')
 
+#%%
+
+df=pd.read_csv('c:/Users/flip/Documents/gde/bus_final.csv',dtype='str',delimiter=';')
+
 
 
 # In[89]:
@@ -51,8 +55,8 @@ pd.set_option('max_rows',1000)
 # In[24]:
 
 
-s.columns = map(str.lower, s.columns)
-s.dtypes
+df.columns = map(str.lower, df.columns)
+df.dtypes
 
 
 # # Route Times

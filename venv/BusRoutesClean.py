@@ -2,7 +2,7 @@
 
 # In[1]:
 
-
+import boto3
 import pandas as pd
 from IPython.core.display import HTML
 
@@ -102,30 +102,37 @@ for index, row in df.iterrows():
         # f.write('{0};{1};{2};{3};{4};{5};{6};{7}\n'.format(route_guid,lat,lon,gps_time,user,driver,regnumber,on_off))
 
 # In[94]:
-s = pd.read_csv('g:/gde/Bus/student_rekognition.csv', dtype='str', encoding='ANSI')
+#s = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/17 July Rekog routes stop Table.csv', dtype='str', encoding='ANSI',delimiter=';')
+s = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/sr_new.csv', dtype='str', encoding='ANSI',delimiter=',')
+#%%
+srn = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/srn.csv', dtype='str', encoding='ANSI',delimiter=';')
 
 # In[95]:
-b = pd.read_csv('g:/gde/Bus/bus_stops.csv', dtype='str')
+b = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/bus_stops.csv', dtype='str')
+#l = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/17 july LEARNERS Table V1.csv',encoding='ansi' ,dtype='str',delimiter=';')
+l = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/learners.csv',encoding='ansi' ,dtype='str',delimiter=',')
 
 # In[96]:
-r = pd.read_csv('g:/gde/Bus/routes.csv', dtype='str')
+r = pd.read_csv('c:/Users/flip/Documents/GDE/Bus/routes.csv', dtype='str')
 
 # In[99]:
 s = s.fillna('na')
 r = r.fillna('na')
 b = b.fillna('na')
+l = l.fillna('na')
 
 # In[100]:
 s.columns = map(str.lower, s.columns)
 r.columns = map(str.lower, r.columns)
 b.columns = map(str.lower, b.columns)
-
+l.columns = map(str.lower, l.columns)
 # In[101]:
 s['gps_time'] = s.gps_time.str.split('.JPG', expand=True)[0]
 s['gps_time'] = s.gps_time.str.replace('_', ' ')
 s['gps_time'] = s.gps_time.str.replace('v', '')
 s['capture_date'] = pd.to_datetime(s.gps_time)
-s.sort_values('capture_date', inplace=True)
+#%%
+s.sort_values(['routeguid_table','stopguid_table','stop_number'], inplace=True)
 
 # In[110]:
 #tmp = (b.stop_date == 'na') & (b.start_date != 'na')
@@ -143,23 +150,76 @@ b['start_date'] = pd.to_datetime(b['start_date'])
 b.sort_values('stop_date', inplace=True)
 r.sort_values('capture_date', inplace=True)
 new = b.start_gps.str.split(',', n=1, expand=True)
-b['lat_start'] = pd.to_numeric(new[0])
-b['lon_start'] = pd.to_numeric(new[1])
-
-#%%
-s['lat'] = pd.to_numeric(s['lat'])
-s['lon'] = pd.to_numeric(s['lon'])
-
-
+b['lat'] = pd.to_numeric(new[0])
+b['lon'] = pd.to_numeric(new[1])
 
 # In[92]:
 s.index = s.capture_date
-b.index = b.capture_date
+#%%
+b.index = b.stop_date
 r.index = r.capture_date
 
 # In[8]:
 b = pd.merge(b, r[['route_guid', 'agent_guid','qa_status']], on='route_guid', how='inner')
 s = pd.merge(s, r[['route_guid', 'agent_guid','qa_status']], on='route_guid', how='inner')
+
+srnm = pd.merge(srn,s,left_on='id',right_on='student_id',how='inner')
+#%%
+
+client = boto3.client('rekognition')
+
+rekognition = boto3.client('rekognition', region_name='eu-west-1')
+dynamodb = boto3.client('dynamodb', region_name='eu-west-1')
+s3 = boto3.resource('s3',region_name='eu-west-1')
+my_bucket = s3.Bucket('scholartransport')
+i=0
+f = open('c:/Users/flip/Documents/GDE/facesschool.csv','w')
+f.write('EMIS_NUMBER;LEARNER_GUID;PHOTONAME\n')
+
+for index, row in srnm.iterrows():
+    fname = row['photoname']
+    #if row['emis'] != row['emis_number'] and row['emis']=='700251785':
+    if row['emis'] == '700251785':
+        #print(row['photoname'])
+        if (fname.find('_IN_') >= 0 or fname.find('_OUT_') >= 0):
+            print(fname)
+            emisnumber = row['emis_number']
+            s3.Bucket('scholartransport').download_file(fname, 'rekon.jpg')
+            print(row['emis'])
+            print(row['emis_number'])
+            try:
+                with open('rekon.jpg', 'rb') as image:
+                    response = client.search_faces_by_image(
+                        CollectionId=emisnumber,
+                        FaceMatchThreshold=99,
+                        Image={'Bytes': image.read()})
+                print(response)
+                faceMatches = response['FaceMatches']
+                print('Matching faces')
+                for match in faceMatches:
+                    print('FaceId:' + match['Face']['FaceId'])
+                    print('ExternalImageId:' + match['Face']['ExternalImageId'])
+                    studentrekognitionid = match['Face']['ExternalImageId']
+                    print('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
+                    print
+            except:
+                print('Error....')
+
+            #input('press enter...')
+
+            print('{0}:{1}:{2}'.format(emisnumber,studentrekognitionid,fname))
+            f.write('{0}:{1}:{2}\n'.format(emisnumber,studentrekognitionid,fname))
+
+        if i % 50 == 0:
+            f.flush()
+            print('Flush....', i)
+        i += 1
+    #if i>20:
+        #break
+f.close()
+
+
+
 
 # In[20]:
 b.sort_values('stop_date', inplace=True)
@@ -168,15 +228,32 @@ sb = pd.merge_asof(s, b, left_on='capture_date',right_on = 'stop_date', by='rout
 
 # In[109]:
 
-sb.to_csv('g:/gde/Bus/sb.csv')
+sb.to_csv('c:/Users/flip/Documents/GDE/Bus/sb.csv')
 
 # In[26]:
 sbg=sb.route_guid.value_counts()
 sbgs=sb.groupby(['route_guid','stop_guid_y','lat_start','lon_start'])
 
 #%%
+s['lat']=s.lat.str.replace(',', '.')
+s['lon']=s.lon.str.replace(',', '.')
+#s['capture_date'] = pd.to_datetime(s.photo_date + ' ' + s.photo_time)
+#%%
+
+s['lat'] = pd.to_numeric(s.lat)
+s['lon'] = pd.to_numeric(s.lon)
+#%%
+s.rename(columns={'stop number reviewed': 'stop_number_reviewed'}, inplace=True)
+s.sort_values(['routeguid_table','stopguid_table','stop_number_reviewed'], inplace=True)
+
+g = s.routeguid_table.value_counts()
+#%%
 for name, group in sbgs.groupby(['route_guid','stop_guid_y','lat_start','lon_start']):
     print(name)
+#%%
+for i in g.items():
+    route = i[0]
+    print(route)
 #%%
 
 colors = [
@@ -201,23 +278,25 @@ colors = [
 ]
 c = 1
 m = folium.Map([-26.5973689, 27.8349605], zoom_start=12)
-for i, j in sbg.items():
-    route = i
+for i in g.items():
+    route = i[0]
     line = []
     print(route)
-    for index, row in sb[sb.route_guid == route].iterrows():
+    if c == 16:
+        break
+    for index, row in s[s.routeguid_table == route].iterrows():
         p = [row['lat'], row['lon']]
         print(p)
-        #line.append([row['lat_start'], row['lon_start']])
-        poptxt = str(row['route_guid']) + ' ' + str(row['stop_number'])
+        line.append([row['lat'], row['lon']])
+        poptxt = str(row['routeguid_table']) + ' ' + str(row['stop_number_reviewed'])
         color = colors[c]
-        if str(row['stop_number']) == '1':
-            color = 'red'
-        folium.Marker(location=p,popup=poptxt,icon=folium.Icon(color=color)).add_to(m)
-    #folium.PolyLine(line, popup=route, color=colors[c]).add_to(m)
+        folium.Marker(location=p,
+            popup=poptxt,
+            icon=folium.Icon(color=color)).add_to(m)
+    folium.PolyLine(line, popup=route, color=colors[c]).add_to(m)
     c+=1
     break
-m.save('g:/gde/Bus/sb.html')
+m.save('c:/Users/flip/Documents/GDE/Bus/sb.html')
 
 
 #%%
@@ -225,7 +304,7 @@ m.save('g:/gde/Bus/sb.html')
 m = folium.Map([-26.5973689, 27.8349605], zoom_start=12)
 oldroute = 0
 line = []
-for i, j in sbg.items():
+for i, j in g.items():
     route = i[0]
     routestop = i[1]
     if route != oldroute:
@@ -236,7 +315,6 @@ for i, j in sbg.items():
     for index, row in sb[val].iterrows():
         if row['route_guid'] == route and row['stop_number'] == i[1]:
             p = [row['lat_start'], row['lon_start']]
-            print(p)
             line.append([row['lat_start'], row['lon_start']])
             poptxt = str(row['route_guid']) + ' ' + str(routestop) + ' ' + str(j)
             color = 'green'
@@ -247,6 +325,25 @@ for i, j in sbg.items():
                           icon=folium.Icon(color=color)).add_to(m)
 
 # In[30]:
+g=s.route_guid.value_counts()
+for i,j in g.items():
+    route = i
+    nogps=0
+    for index, row in s[s.route_guid == route].iterrows():
+        if row['lat'] == 0:
+            nogps=nogps+1
+    if nogps > 0:
+        print('Route : {0} , has {1} records without gps coords'.format(route,nogps))
+
+#%%
+for index, row in l.iterrows():
+    tmp = s[s.student_rekognition_id == row['learner_guid']]
+    l.at[i, 'disembark_route'] = tmp.iloc[0].route_guid
+    l.at[i, 'disembark_route_time'] = s[s.student_rekognition_id == row['learner_guid']]
+
+
+
+#%%
 
 
 tmpg.sort_values('student_id', ascending=False).drop_duplicates(['route_guid', 'emis_number'])
