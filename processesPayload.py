@@ -61,6 +61,19 @@ for index, row in dfm.iterrows():
 
 dfm.to_csv('c:/Users/flip/Documents/NDPW/tasks.csv',sep=';')
 dfp.to_csv('c:/Users/flip/Documents/NDPW/tasksPayload.csv',sep=';')
+tdf = dfm.merge(dfp,how='outer',left_on='number',right_on='taskNumber')
+#%%
+print('Getting Processes.....')
+response = requests.get('https://integration227992-pmmopc.integration.ocp.oraclecloud.com:443/ic/api/process/v1/processes?processState=OPEN'
+                        '&processName=Verification&assignmentFilter=ALL&limit=5000&processState=COMPLETED&processState=SUSPENDED',
+                        auth=('flip@profmap.com', '!Flip1944!'))
 
+data = response.json()
+items = data['items']
+headers = {'Accept': 'application/json'}
+dp= json_normalize(items)
+dp.to_csv('c:/Users/flip/Documents/NDPW/processes.csv',sep=';')
+dfall = tdf.merge(dp,how='outer',left_on='processId_x',right_on='processId')
+dfall.to_csv('c:/Users/flip/Documents/NDPW/AllData.csv',sep=';')
 
 print(cnt)
